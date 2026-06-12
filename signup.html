@@ -268,7 +268,7 @@ async function sendCode() {
     return
   }
 
-  successEl.textContent = "Code sent to " + email + ". Check your email (also check spam). Enter the 6-digit code below."
+  successEl.textContent = "Email sent to " + email + ". Check your inbox (and spam)."
   successEl.classList.add("show")
   document.getElementById("codeEmail").textContent = email
   document.getElementById("step1").classList.remove("active")
@@ -386,12 +386,16 @@ checkMagicLink()
       <a href="/login" class="btn btn-secondary">Already have an account? Log in</a>
     </div>
 
-    <!-- Step 2: Verify Code -->
+    <!-- Step 2: Verify -->
     <div class="step" id="step2">
       <h1>Check your email</h1>
-      <p>Enter the 6-digit code sent to <span id="codeEmail" style="color:#fafafa"></span></p>
+      <p>We sent a verification email to <span id="codeEmail" style="color:#fafafa"></span></p>
       <div class="error" id="codeError"></div>
-      <label for="codeInput">Verification code</label>
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:24px;margin-bottom:16px">
+        <p style="font-size:13px;margin:0 0 12px;color:#888"><strong style="color:#fafafa">Option 1:</strong> Click the <strong>Sign in</strong> button in the email — we'll finish setting up your account automatically.</p>
+        <p style="font-size:13px;margin:0;color:#888"><strong style="color:#fafafa">Option 2:</strong> Enter the 6-digit code from the email below:</p>
+      </div>
+      <label for="codeInput">6-digit verification code</label>
       <input type="text" id="codeInput" class="code-input" placeholder="000000" maxlength="6" required/>
       <button class="btn" id="verifyBtn">Verify &amp; create account</button>
       <button class="btn-link" id="restartBtn">Wrong email? Start over</button>
