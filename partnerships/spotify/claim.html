@@ -189,9 +189,11 @@ body { background: #000 !important; min-height: 100vh; display: flex; align-item
 .claim-box .badge { display: inline-flex; align-items: center; gap: 8px; color: #1ed760; font-size: 13px; margin-bottom: 24px; }
 .claim-box input { width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fafafa; font-size: 14px; margin-bottom: 12px; outline: none; font-family: inherit; box-sizing: border-box; }
 .claim-box input:focus { border-color: #1ed760; }
-.claim-box button { width: 100%; padding: 12px; background: #1ed760; color: #000; border: none; border-radius: 100px; font-size: 14px; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; font-family: inherit; }
-.claim-box button:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(30,215,96,0.2); }
-.claim-box button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.claim-box .btn { width: 100%; padding: 12px; background: #1ed760; color: #000; border: none; border-radius: 100px; font-size: 14px; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; font-family: inherit; display: block; text-decoration: none; text-align: center; box-sizing: border-box; }
+.claim-box .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(30,215,96,0.2); }
+.claim-box .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.claim-box .btn-secondary { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #fafafa; margin-top: 12px; }
+.claim-box .btn-secondary:hover { border-color: #fafafa; }
 .claim-box .fine { font-size: 11px; color: rgba(255,255,255,0.2); margin-top: 16px; }
 .claim-box .back { display: inline-block; margin-top: 20px; font-size: 13px; color: rgba(255,255,255,0.3); text-decoration: none; }
 .claim-box .back:hover { color: #fafafa; }
@@ -199,16 +201,10 @@ body { background: #000 !important; min-height: 100vh; display: flex; align-item
 .claim-box .error.show { display: block; }
 .claim-box .success { color: #4caf50; font-size: 14px; display: none; }
 .claim-box .success.show { display: block; }
-.claim-box .login-prompt { border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 32px; margin-bottom: 24px; }
-.claim-box .login-prompt h2 { font-size: 18px; font-weight: 600; margin: 0 0 8px; }
-.claim-box .login-prompt p { font-size: 13px; margin: 0 0 20px; }
-.claim-box .login-prompt a { display: inline-block; padding: 10px 24px; background: #fafafa; color: #000; border-radius: 100px; font-size: 13px; font-weight: 600; text-decoration: none; transition: transform 0.2s; }
-.claim-box .login-prompt a:hover { transform: translateY(-2px); }
 .claim-box .user-info { font-size: 12px; color: #555; margin-bottom: 24px; }
 </style>
 <script type="module">
 import { supabase } from "/supabase.js"
-
 const claimContent = document.getElementById("claimContent")
 const loginPrompt = document.getElementById("loginPrompt")
 const claimForm = document.getElementById("claimForm")
@@ -216,7 +212,6 @@ const claimBtn = document.getElementById("claimBtn")
 const claimError = document.getElementById("claimError")
 const claimSuccess = document.getElementById("claimSuccess")
 const userEmail = document.getElementById("userEmail")
-
 async function init() {
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) {
@@ -227,7 +222,6 @@ async function init() {
   claimContent.style.display = "block"
   loginPrompt.style.display = "none"
   userEmail.textContent = session.user.email
-
   const { data: claims } = await supabase.from("claims").select("*").eq("user_id", session.user.id)
   if (claims && claims.length > 0) {
     claimSuccess.textContent = "You have already claimed your 3 months! Check your email for details."
@@ -235,24 +229,20 @@ async function init() {
     claimForm.style.display = "none"
   }
 }
-
 claimForm.addEventListener("submit", async (e) => {
   e.preventDefault()
   claimBtn.disabled = true
   claimBtn.textContent = "Claiming..."
   claimError.classList.remove("show")
-
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) {
     window.location.href = "/login?redirect=/partnerships/spotify/claim"
     return
   }
-
   const { error } = await supabase.from("claims").insert({
     user_id: session.user.id,
     email: session.user.email
   })
-
   if (error) {
     claimError.textContent = error.message
     claimError.classList.add("show")
@@ -260,29 +250,25 @@ claimForm.addEventListener("submit", async (e) => {
     claimBtn.textContent = "Try again"
     return
   }
-
   claimSuccess.textContent = "Claimed! 3 months of Spotify Premium are on the way to your email."
   claimSuccess.classList.add("show")
   claimForm.style.display = "none"
 })
-
 init()
 </script>
 </head>
 <body>
 <div class="claim-box">
   <div class="badge">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="#1ed760"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0z"/></svg>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="#1ed760"><circle cx="12" cy="12" r="12"/><path fill="#000" d="M12 3C7.05 3 3 7.05 3 12s4.05 9 9 9 9-4.05 9-9-4.05-9-9-9zm4.14 13.02c-.17.25-.5.33-.75.16-2.18-1.4-4.9-1.72-8.12-.94-.32.08-.65-.1-.73-.42-.08-.32.1-.65.42-.73 3.5-.86 6.55-.5 9.02 1.12.25.17.33.5.16.75v.01zm1.13-2.68c-.21.32-.59.4-.91.2-2.62-1.54-6.16-2.02-9.58-1.1-.35.1-.72-.1-.82-.46-.1-.35.1-.72.46-.82 3.78-1.02 7.62-.5 10.64 1.23.32.2.4.59.2.91v.01zm.1-2.86c-3.09-1.82-7.68-2.32-11.7-1.29-.5.14-1.02-.12-1.14-.64-.14-.5.12-1.02.64-1.14 4.45-1.16 9.45-.62 12.96 1.56.46.24.6.8.36 1.26-.24.46-.8.6-1.26.36l.02-.01z"/></svg>
     Spotify x Vercel
   </div>
-
   <div class="login-prompt" id="loginPrompt" style="display:none">
     <h2>Log in to claim</h2>
     <p>You need a VercelCollab account to redeem this offer.</p>
-    <a href="/login?redirect=/partnerships/spotify/claim">Log in</a>
-    <div style="margin-top:12px;font-size:12px;color:#555">No account? <a href="/signup?redirect=/partnerships/spotify/claim" style="color:#888;text-decoration:none">Sign up</a></div>
+    <a href="/login?redirect=/partnerships/spotify/claim" class="btn">Log in</a>
+    <a href="/signup?redirect=/partnerships/spotify/claim" class="btn btn-secondary">Create account</a>
   </div>
-
   <div id="claimContent" style="display:none">
     <h1>Claim your 3 months free</h1>
     <p>Redeem 3 months of Spotify Premium, on us.</p>
@@ -291,11 +277,10 @@ init()
     <div class="success" id="claimSuccess"></div>
     <form id="claimForm">
       <input type="text" placeholder="Spotify email (optional)" id="spotifyEmail"/>
-      <button type="submit" id="claimBtn">Redeem 3 months free</button>
+      <button type="submit" class="btn" id="claimBtn">Redeem 3 months free</button>
     </form>
     <div class="fine">Terms apply. Only for new Spotify Premium users. Offer ends soon.</div>
   </div>
-
   <a href="javascript:void(0)" class="back" onclick="history.back()">&larr; Back</a>
 </div>
 </body>
