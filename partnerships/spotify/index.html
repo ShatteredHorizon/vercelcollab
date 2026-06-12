@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" class="geist_1620151b-module__2VSEvG__className geist_1620151b-module__2VSEvG__variable">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#000"/>
+<meta name="color-scheme" content="dark light"/>
+<title>Spotify × Vercel — Partnership</title>
+<style>
+:root { color-scheme: dark; --bg: #000; --fg: #fafafa; --accents-1: #fafafa; --accents-2: #333; --accents-5: #888; --geist-background: #000; --geist-foreground: #fafafa; --geist-link-color: #3388ff; --geist-radius: 8px; --geist-space-gap: 16px; --font-sans: "Geist", Arial, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; line-height: 1.6; }
+.nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid rgba(255,255,255,0.06); max-width: 1200px; margin: 0 auto; }
+.nav-l { display: flex; align-items: center; gap: 32px; }
+.nav-l a { color: var(--accents-5); text-decoration: none; font-size: 14px; transition: color 0.2s; }
+.nav-l a:hover { color: var(--fg); }
+.nav-logo { color: var(--fg); font-size: 20px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 8px; }
+.nav-logo svg { width: 20px; height: 20px; }
+.hero { max-width: 1000px; margin: 0 auto; padding: 120px 24px 80px; text-align: center; }
+.hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 100px; padding: 6px 16px; font-size: 13px; color: var(--accents-5); margin-bottom: 24px; }
+.hero-badge span { color: var(--fg); }
+.hero h1 { font-size: clamp(40px, 6vw, 72px); font-weight: 600; letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 24px; }
+.hero h1 .highlight { background: linear-gradient(135deg, #1ed760, #1ed760 30%, #3388ff 70%, #a78bfa); -webkit-background-clip: text; background-clip: text; color: transparent; background-size: 200% 200%; animation: shift 6s ease infinite; }
+@keyframes shift { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+.hero p { font-size: 18px; color: var(--accents-5); max-width: 600px; margin: 0 auto 40px; }
+.hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: 100px; font-size: 14px; font-weight: 500; text-decoration: none; cursor: pointer; transition: all 0.25s cubic-bezier(0.16,1,0.3,1); border: none; }
+.btn-primary { background: var(--fg); color: var(--bg); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255,255,255,0.1); }
+.btn-secondary { background: rgba(255,255,255,0.06); color: var(--fg); border: 1px solid rgba(255,255,255,0.1); }
+.btn-secondary:hover { transform: translateY(-2px); background: rgba(255,255,255,0.1); }
+.content { max-width: 800px; margin: 0 auto; padding: 0 24px 120px; }
+.content h2 { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; margin: 80px 0 16px; }
+.content h2:first-child { margin-top: 0; }
+.content p { color: var(--accents-5); font-size: 16px; margin-bottom: 20px; line-height: 1.8; }
+.content ul { list-style: none; padding: 0; margin: 24px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 600px) { .content ul { grid-template-columns: 1fr; } }
+.content li { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 24px; transition: border-color 0.2s, transform 0.2s; }
+.content li:hover { border-color: rgba(255,255,255,0.12); transform: translateY(-2px); }
+.content li strong { display: block; font-size: 16px; margin-bottom: 8px; color: var(--fg); }
+.content li span { font-size: 14px; color: var(--accents-5); line-height: 1.6; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin: 48px 0; }
+@media (max-width: 600px) { .stats { grid-template-columns: 1fr; } }
+.stat { text-align: center; padding: 32px 24px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; }
+.stat-num { font-size: 36px; font-weight: 600; letter-spacing: -0.03em; }
+.stat-label { font-size: 14px; color: var(--accents-5); margin-top: 4px; }
+.footer { border-top: 1px solid rgba(255,255,255,0.06); padding: 40px 24px; text-align: center; font-size: 13px; color: var(--accents-5); }
+.footer a { color: var(--accents-5); text-decoration: none; }
+.footer a:hover { color: var(--fg); }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="nav-l">
+    <a class="nav-logo" href="javascript:void(0)">
+      <svg viewBox="0 0 261 52" fill="currentColor"><path d="M59.8 52H0L29.9 0zm67.82-38.45q4.9 0 8.81 2.13a15.5 15.5 0 0 1 6.22 6.32q2.3 4.2 2.38 10.26v2.06h-26.35q.27 4.4 2.58 6.92 2.38 2.47 6.36 2.47a8.4 8.4 0 0 0 7.76-4.93l9.16.67q-1.68 4.98-6.29 7.99t-10.63 3q-5.53 0-9.64-2.27a16 16 0 0 1-6.43-6.46 20 20 0 0 1-2.31-9.72q0-5.52 2.3-9.72a16 16 0 0 1 6.44-6.46 20 20 0 0 1 9.64-2.26m62.55 0q4.47 0 8.18 1.66a15.3 15.3 0 0 1 6.15 4.6q2.38 3 2.87 7.05l-9.23.47a8 8 0 0 0-2.8-5 7.7 7.7 0 0 0-5.17-1.86q-4.33 0-6.7 3-2.4 3-2.39 8.52t2.38 8.52q2.38 3 6.71 3a8.4 8.4 0 0 0 7.76-4.93l9.16.67q-1.68 4.98-6.29 7.99t-10.63 3q-5.53 0-9.64-2.27a16 16 0 0 1-6.43-6.46 20 20 0 0 1-2.31-9.72q0-5.52 2.3-9.72a16 16 0 0 1 6.44-6.46 20 20 0 0 1 9.64-2.26m62.55 0q4.47 0 8.18 1.66a15.3 15.3 0 0 1 6.15 4.6q2.38 3 2.87 7.05l-9.23.47a8 8 0 0 0-2.8-5 7.7 7.7 0 0 0-5.17-1.86q-4.33 0-6.7 3-2.4 3-2.39 8.52t2.38 8.52q2.38 3 6.71 3a8.4 8.4 0 0 0 7.76-4.93l9.16.67q-1.68 4.98-6.29 7.99t-10.63 3q-5.53 0-9.64-2.27a16 16 0 0 1-6.43-6.46 20 20 0 0 1-2.31-9.72q0-5.52 2.3-9.72a16 16 0 0 1 6.44-6.46 20 20 0 0 1 9.64-2.26m62.55 0q4.47 0 8.18 1.66a15.3 15.3 0 0 1 6.15 4.6q2.38 3 2.87 7.05l-9.23.47a8 8 0 0 0-2.8-5 7.7 7.7 0 0 0-5.17-1.86q-4.33 0-6.7 3-2.4 3-2.39 8.52t2.38 8.52q2.38 3 6.71 3a8.4 8.4 0 0 0 7.76-4.93l9.16.67q-1.68 4.98-6.29 7.99t-10.63 3q-5.53 0-9.64-2.27a16 16 0 0 1-6.43-6.46 20 20 0 0 1-2.31-9.72q0-5.52 2.3-9.72a16 16 0 0 1 6.44-6.46 20 20 0 0 1 9.64-2.26"/></svg>
+      Vercel
+    </a>
+    <a href="javascript:void(0)">Products</a>
+    <a href="javascript:void(0)">Solutions</a>
+    <a href="javascript:void(0)">Resources</a>
+    <a href="javascript:void(0)">Pricing</a>
+  </div>
+  <a href="javascript:void(0)" class="btn btn-primary" style="padding:8px 16px;font-size:13px">Contact Sales</a>
+</div>
+
+<div class="hero">
+  <div class="hero-badge">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="#1ed760"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+    <span>Announced</span> · Partner Program
+  </div>
+  <h1>Music meets <span class="highlight">infrastructure</span></h1>
+  <p>Spotify and Vercel are partnering to bring the world's best audio streaming platform to the edge — powering personalized experiences at global scale.</p>
+  <div class="hero-actions">
+    <a href="javascript:void(0)" class="btn btn-primary">Read the announcement →</a>
+    <a href="javascript:void(0)" class="btn btn-secondary">View documentation</a>
+  </div>
+</div>
+
+<div class="content">
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num" style="color:#1ed760">3.2B</div>
+      <div class="stat-label">Monthly active users</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" style="color:#3388ff">100M+</div>
+      <div class="stat-label">Tracks delivered daily</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" style="color:#a78bfa">99.99%</div>
+      <div class="stat-label">Uptime on Vercel</div>
+    </div>
+  </div>
+
+  <h2>Why this partnership</h2>
+  <p>Spotify has redefined how the world experiences audio. With millions of artists and billions of playlists curated daily, the infrastructure required to deliver personalized, real-time recommendations at this scale is immense. Vercel's edge network and Fluid Compute model enable Spotify to serve dynamic content with zero cold starts, globally.</p>
+
+  <h2>What we're building together</h2>
+  <ul>
+    <li>
+      <strong>Edge-powered personalization</strong>
+      <span>Real-time playlist recommendations served from 100+ locations worldwide using Vercel's Edge Functions and Fluid Compute.</span>
+    </li>
+    <li>
+      <strong>Instant search at scale</strong>
+      <span>Server-side rendered search results with sub-50ms response times, powered by Vercel's global CDN and incrementalstatic regeneration.</span>
+    </li>
+    <li>
+      <strong>Artist-focused dashboards</strong>
+      <span>Interactive, real-time analytics for creators using Next.js server components and Vercel's data pipeline integrations with BigQuery and Snowflake.</span>
+    </li>
+    <li>
+      <strong>AI-powered discovery</strong>
+      <span>New AI-driven recommendation models deployed on Vercel's AI infrastructure, reducing inference latency by 40% compared to the previous architecture.</span>
+    </li>
+  </ul>
+
+  <h2>Architecture highlights</h2>
+  <p>The new Spotify x Vercel stack combines Next.js App Router for the frontend with Fluid Compute for backend workloads. Migration from a monolithic API to a composable edge architecture reduced p95 latency by 60% and cut infrastructure costs by 35%.</p>
+
+</div>
+
+<div class="footer">
+  <p><a href="javascript:void(0)">Spotify</a> × <a href="javascript:void(0)">Vercel</a> — Partner Program. © 2026 Vercel Inc.</p>
+</div>
+
+</body>
+</html>
