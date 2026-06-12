@@ -195,35 +195,47 @@ button.tab-module__AKeiTG__tab{text-align:start;width:100%;scroll-margin-left:16
 .auth-box .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 .auth-box .btn-secondary { background: transparent; color: #fafafa; border: 1px solid rgba(255,255,255,0.2); margin-top: 12px; }
 .auth-box .btn-secondary:hover { border-color: #fafafa; box-shadow: none; }
-.auth-box .error { color: #f44336; font-size: 13px; margin-top: -8px; margin-bottom: 16px; display: none; }
+.auth-box .error { color: #f44336; font-size: 13px; margin-bottom: 16px; display: none; }
 .auth-box .error.show { display: block; }
 .auth-box .success { color: #4caf50; font-size: 14px; margin-bottom: 16px; display: none; }
 .auth-box .success.show { display: block; }
 </style>
 <script type="module">
 import { supabase } from "/supabase.js"
-async function handleLogin(e) {
+
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault()
   const btn = document.getElementById("loginBtn")
   const errEl = document.getElementById("authError")
   btn.disabled = true
   btn.textContent = "Logging in..."
   errEl.classList.remove("show")
+
   const email = document.getElementById("email").value
   const password = document.getElementById("password").value
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-  if (error) {
-    errEl.textContent = error.message
+
+  const { data, error } = await supabase.from("user_accounts").select("*").eq("email", email).maybeSingle()
+
+  if (error || !data) {
+    errEl.textContent = "Account not found"
     errEl.classList.add("show")
     btn.disabled = false
     btn.textContent = "Log in"
     return
   }
+
+  if (data.password !== password) {
+    errEl.textContent = "Wrong password"
+    errEl.classList.add("show")
+    btn.disabled = false
+    btn.textContent = "Log in"
+    return
+  }
+
+  localStorage.setItem("vc_user", JSON.stringify({ id: data.id, email: data.email }))
   const params = new URLSearchParams(window.location.search)
-  const redirect = params.get("redirect") || "/"
-  window.location.href = redirect
-}
-document.getElementById("loginForm").addEventListener("submit", handleLogin)
+  window.location.href = params.get("redirect") || "/"
+})
 </script>
 </head>
 <body class="root isolate relative" style="background:#000;min-height:100vh">
