@@ -208,8 +208,31 @@ button.tab-module__AKeiTG__tab{text-align:start;width:100%;scroll-margin-left:16
 <script type="module">
 import { supabase } from "/supabase.js"
 
-let pendingEmail = ""
-let pendingPassword = ""
+const STORAGE_KEY = "vc_signup"
+
+function getPending() {
+  try {
+    const d = JSON.parse(sessionStorage.getItem(STORAGE_KEY))
+    if (d && d.email && d.password) return d
+  } catch {}
+  return null
+}
+
+function setPending(email, password) {
+  sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ email, password, redirect: new URLSearchParams(window.location.search).get("redirect") || "/" }))
+}
+
+function clearPending() {
+  sessionStorage.removeItem(STORAGE_KEY)
+}
+
+async function finishSignup(email, password) {
+  const { error: pwError } = await supabase.auth.updateUser({ password })
+  if (pwError) throw pwError
+  clearPending()
+  const redirect = new URLSearchParams(window.location.search).get("redirect") || "/"
+  window.location.href = redirect
+}
 
 async function sendCode() {
   const errEl = document.getElementById("authError")
@@ -217,21 +240,27 @@ async function sendCode() {
   errEl.classList.remove("show")
   successEl.classList.remove("show")
 
-  pendingEmail = document.getElementById("email").value
-  pendingPassword = document.getElementById("password").value
+  const email = document.getElementById("email").value
+  const password = document.getElementById("password").value
   const confirm = document.getElementById("confirm").value
 
-  if (!pendingEmail) { errEl.textContent = "Enter your email"; errEl.classList.add("show"); return }
-  if (pendingPassword.length < 6) { errEl.textContent = "Password must be at least 6 characters"; errEl.classList.add("show"); return }
-  if (pendingPassword !== confirm) { errEl.textContent = "Passwords do not match"; errEl.classList.add("show"); return }
+  if (!email) { errEl.textContent = "Enter your email"; errEl.classList.add("show"); return }
+  if (password.length < 6) { errEl.textContent = "Password must be at least 6 characters"; errEl.classList.add("show"); return }
+  if (password !== confirm) { errEl.textContent = "Passwords do not match"; errEl.classList.add("show"); return }
 
   const btn = document.getElementById("sendBtn")
   btn.disabled = true
   btn.textContent = "Sending..."
 
-  const { error } = await supabase.auth.signInWithOtp({ email: pendingEmail })
+  setPending(email, password)
+
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: window.location.origin + "/signup" }
+  })
 
   if (error) {
+    clearPending()
     errEl.textContent = error.message
     errEl.classList.add("show")
     btn.disabled = false
@@ -239,9 +268,9 @@ async function sendCode() {
     return
   }
 
-  successEl.textContent = "Code sent to " + pendingEmail
+  successEl.textContent = "Code sent to " + email + ". Check your email (also check spam). Enter the 6-digit code below."
   successEl.classList.add("show")
-  document.getElementById("codeEmail").textContent = pendingEmail
+  document.getElementById("codeEmail").textContent = email
   document.getElementById("step1").classList.remove("active")
   document.getElementById("step2").classList.add("active")
   document.getElementById("codeInput").focus()
@@ -251,9 +280,16 @@ async function sendCode() {
 
 async function verifyCode() {
   const errEl = document.getElementById("authError")
-  const successEl = document.getElementById("authSuccess")
   errEl.classList.remove("show")
-  successEl.classList.remove("show")
+
+  const pending = getPending()
+  if (!pending) {
+    errEl.textContent = "Session expired. Please start over."
+    errEl.classList.add("show")
+    document.getElementById("step1").classList.add("active")
+    document.getElementById("step2").classList.remove("active")
+    return
+  }
 
   const code = document.getElementById("codeInput").value.replace(/\s/g, "")
   if (code.length !== 6) { errEl.textContent = "Enter the 6-digit code"; errEl.classList.add("show"); return }
@@ -262,12 +298,13 @@ async function verifyCode() {
   btn.disabled = true
   btn.textContent = "Verifying..."
 
-  const { data, error } = await supabase.auth.verifyOtp({ email: pendingEmail, token: code, type: "email" })
+  const { data, error } = await supabase.auth.verifyOtp({ email: pending.email, token: code, type: "email" })
 
   if (error) {
     errEl.textContent = "Wrong code. " + error.message
     errEl.classList.add("show")
-    // restart
+    clearPending()
+    // restart to step 1
     document.getElementById("step1").classList.add("active")
     document.getElementById("step2").classList.remove("active")
     document.getElementById("codeInput").value = ""
@@ -276,31 +313,44 @@ async function verifyCode() {
     return
   }
 
-  // OTP verified, now set password
-  const { error: pwError } = await supabase.auth.updateUser({ password: pendingPassword })
-
-  if (pwError) {
+  try {
+    await finishSignup(pending.email, pending.password)
+  } catch (pwError) {
     errEl.textContent = pwError.message
     errEl.classList.add("show")
     btn.disabled = false
     btn.textContent = "Verify"
-    return
   }
-
-  successEl.textContent = "Account created! Redirecting..."
-  successEl.classList.add("show")
-  setTimeout(() => {
-    const params = new URLSearchParams(window.location.search)
-    window.location.href = params.get("redirect") || "/"
-  }, 2000)
 }
 
 function restart() {
+  clearPending()
   document.getElementById("authError").classList.remove("show")
   document.getElementById("authSuccess").classList.remove("show")
   document.getElementById("step1").classList.add("active")
   document.getElementById("step2").classList.remove("active")
   document.getElementById("codeInput").value = ""
+}
+
+// On page load: check if magic link redirected back here
+async function checkMagicLink() {
+  const pending = getPending()
+  if (!pending) return
+
+  const { data: { session } } = await supabase.auth.getSession()
+  if (session) {
+    // User clicked magic link and is now authenticated
+    try {
+      await finishSignup(pending.email, pending.password)
+    } catch (e) {
+      // updateUser failed, show step 2 to let them enter code manually
+      document.getElementById("authError").textContent = "Set your password below."
+      document.getElementById("authError").classList.add("show")
+      document.getElementById("codeEmail").textContent = pending.email
+      document.getElementById("step1").classList.remove("active")
+      document.getElementById("step2").classList.add("active")
+    }
+  }
 }
 
 document.getElementById("sendBtn").addEventListener("click", sendCode)
@@ -309,6 +359,8 @@ document.getElementById("restartBtn").addEventListener("click", restart)
 document.getElementById("codeInput").addEventListener("keydown", (e) => {
   if (e.key === "Enter") verifyCode()
 })
+
+checkMagicLink()
 </script>
 </head>
 <body class="root isolate relative" style="background:#000;min-height:100vh">
